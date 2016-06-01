@@ -1,0 +1,37 @@
+<style type="text/css">
+
+/* ###### Body Text ###### */
+
+body {
+  font-family: verdana, tahoma, helvetica, arial, sans-serif;
+}
+
+a {color: #00FF00;} /* links - green */
+a:hover {color: #C3A31E;} /* links - gold */
+
+h1, h2 {
+  color: white;
+  background-color: #006600; /* dark green */
+}
+
+h3, h4, h5, h6 {
+  color: #006B24; /* forest green */
+}
+
+.required {
+  color:  #FF0000; /* red */
+  font-size:  smaller;
+}
+
+.errorMsg {
+  color:  #FF0000; /* red */
+  font-weight: bold;
+}
+
+.highlight {
+  background-color:  #C3A31E; /* gold */
+  color:  #ffffff;
+}
+
+
+</style>

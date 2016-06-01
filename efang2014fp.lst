@@ -1,0 +1,1172 @@
+60-SQL> 
+60-SQL> -- ******************************************************
+60-SQL> --    DROP TABLES
+60-SQL> -- Note:  Issue the appropiate commands to drop tables
+60-SQL> -- ******************************************************
+60-SQL> DROP view PAYMENTS_VIEW;
+
+View dropped.
+
+60-SQL> drop view totalpaidpersubject;
+
+View dropped.
+
+60-SQL> DROP table tbmeasurement purge;
+
+Table dropped.
+
+60-SQL> DROP table tbmeasure_type purge;
+
+Table dropped.
+
+60-SQL> DROP table tbparticipant_note purge;
+
+Table dropped.
+
+60-SQL> DROP table tbnotetype purge;
+
+Table dropped.
+
+60-SQL> DROP table tbexp_vers_participation purge;
+
+Table dropped.
+
+60-SQL> DROP table tbpolarity_type purge;
+
+Table dropped.
+
+60-SQL> DROP table tbexp_version purge;
+
+Table dropped.
+
+60-SQL> DROP table tbsubject_address purge;
+
+Table dropped.
+
+60-SQL> DROP table tbsubject_email purge;
+
+Table dropped.
+
+60-SQL> DROP table tbsubject_phone purge;
+
+Table dropped.
+
+60-SQL> DROP table tbsubject purge;
+
+Table dropped.
+
+60-SQL> DROP table tbexperiment purge;
+
+Table dropped.
+
+60-SQL> DROP table tbexperiment_type purge;
+
+Table dropped.
+
+60-SQL> DROP table tbresearcher purge;
+
+Table dropped.
+
+60-SQL> 
+60-SQL> -- ******************************************************
+60-SQL> --    DROP SEQUENCES
+60-SQL> -- Note:  Issue the appropiate commands to drop sequences
+60-SQL> -- ******************************************************
+60-SQL> 
+60-SQL> --DROP sequence seqsubject;
+60-SQL> 
+60-SQL> -- ******************************************************
+60-SQL> --    CREATE TABLES
+60-SQL> -- ******************************************************
+60-SQL> 
+60-SQL> CREATE table tbresearcher (
+  2          researcherid      char(3)                 NOT NULL
+  3            CONSTRAINT researcherid_ck CHECK (researcherid between 0 and 999 )
+  4            CONSTRAINT pk_researcher PRIMARY KEY,
+  5          researcher_lastname    varchar2(40)          NOT NULL,
+  6          researcher_firstname    varchar2(40)          NOT NULL
+  7  );
+
+Table created.
+
+60-SQL> 
+60-SQL> CREATE table tbsubject (
+  2          subjectid       char(6)                 not null
+  3            constraint subjectid_ck CHECK (subjectid between 000000 and 999999 )
+  4            constraint pk_subject primary key,
+  5          subject_lastname    varchar2(40)          NOT NULL,
+  6          subject_firstname    varchar2(40)          NOT NULL
+  7  );
+
+Table created.
+
+60-SQL> 
+60-SQL> 
+60-SQL> /*how to specify only certain character combinations in tbsubjectphone for phone type?*/
+CREATE table tbsubject (
+             *
+ERROR at line 1:
+ORA-00955: name is already used by an existing object 
+
+
+60-SQL> CREATE table tbsubject_phone (
+  2          subjectid       char(6)                 not null,
+  3          lineno          numeric(38,0)                 null,
+  4          phoneno         char(10)                null,
+  5          phonetype       char(20)                null,
+  6          constraint lineno_ck CHECK (lineno between 000 and 999 ),
+  7          constraint phoneno_ck CHECK (phoneno between 0000000000 and 9999999999),
+  8          constraint fk_subjectid_tbsubjectphone FOREIGN KEY (subjectid) references tbsubject(subjectid) on delete cascade,
+  9          constraint pk_subjectphone PRIMARY KEY (subjectid, lineno)
+ 10  );
+
+Table created.
+
+60-SQL> 
+60-SQL> /*how to check that no two e-mails are the same, and there is an @ symbol?*/
+CREATE table tbsubject_phone (
+             *
+ERROR at line 1:
+ORA-00955: name is already used by an existing object 
+
+
+60-SQL> /*SELECT
+CREATE table tbsubject_phone (
+             *
+ERROR at line 1:
+ORA-00955: name is already used by an existing object 
+
+
+60-SQL>     name, email, COUNT(*)
+SP2-0734: unknown command beginning "name, emai..." - rest of line ignored.
+60-SQL> FROM
+SP2-0042: unknown command "FROM" - rest of line ignored.
+60-SQL>     users
+SP2-0042: unknown command "users" - rest of line ignored.
+60-SQL> GROUP BY
+SP2-0042: unknown command "GROUP BY" - rest of line ignored.
+SP2-0044: For a list of known commands enter HELP
+and to leave enter EXIT.
+60-SQL>     name, email
+SP2-0734: unknown command beginning "name, emai..." - rest of line ignored.
+60-SQL> HAVING
+SP2-0042: unknown command "HAVING" - rest of line ignored.
+60-SQL>     COUNT(*) > 1
+SP2-0734: unknown command beginning "COUNT(*) >..." - rest of line ignored.
+60-SQL>     */
+SP2-0042: unknown command "*/" - rest of line ignored.
+SP2-0044: For a list of known commands enter HELP
+and to leave enter EXIT.
+60-SQL> CREATE table tbsubject_email (
+  2          subjectid       char(6)                 not null,
+  3          emailno         numeric(38,0)                 null,
+  4          subjectemail    char(100)                null
+  5            constraint subjectemail_ck check (subjectemail like ('%@%.%')),
+  6          constraint email_ck CHECK (emailno between 000 and 999 ),
+  7          constraint fk_subjectid_tbsubjectemail FOREIGN KEY (subjectid) references tbsubject(subjectid) on delete cascade,
+  8          constraint pk_subjectemail PRIMARY KEY (subjectid, emailno)
+  9  );
+
+Table created.
+
+60-SQL> 
+60-SQL> /*make sure constraints for addresses are appropriate - i.e. state abbreviations?*/
+CREATE table tbsubject_email (
+             *
+ERROR at line 1:
+ORA-00955: name is already used by an existing object 
+
+
+60-SQL> CREATE table tbsubject_address (
+  2          subjectid     char(6)                  not null,
+  3          addressno     numeric(38,0)                  not null,
+  4          streetnumber  char(50)                 null,
+  5          streetname    char(100)                null,
+  6          city          char(100)                null,
+  7          state         char(2)                  null,
+  8          zip           char(5)                  null,
+  9          addresstype   char(20)                 null,
+ 10          constraint addressno_ck CHECK (addressno between 000 and 999 ),
+ 11          constraint fk_subjectid_tbsubjectaddress FOREIGN KEY(subjectid) references tbsubject(subjectid) on delete cascade,
+ 12          constraint pk_subjectaddress PRIMARY KEY (subjectid, addressno)
+ 13  );
+
+Table created.
+
+60-SQL> 
+60-SQL> CREATE table tbexperiment_type (
+  2          exptype       char(4)   not null,
+  3          exptype_description char(100) not null,
+  4          constraint pk_tbexperiment_type PRIMARY KEY (exptype)
+  5  );
+
+Table created.
+
+60-SQL> 
+60-SQL> CREATE table tbexperiment (
+  2          experimentid    char(4)              not null
+  3            constraint experimentid_ck check (experimentid between 0 and 9999),
+  4          exptype         char(4)                 not null,
+  5          exp_polarityon  char(1)                 not null,
+  6            CONSTRAINT polarityon_ck CHECK (exp_polarityon = '0' OR exp_polarityon = '1'),
+  7          polarityDescription char(20)          null,
+  8            constraint fk_exptype_tbexperiment FOREIGN KEY(exptype) references tbexperiment_type(exptype) on delete cascade,
+  9            constraint pk_tbexperiment PRIMARY KEY (experimentid),
+ 10            constraint exppolarityon_ck check (
+ 11                exp_polarityon = 0 -- polarityDescription null or not null
+ 12                OR (exp_polarityon <> 0 AND polarityDescription IS NOT NULL)
+ 13                )
+ 14  );
+
+Table created.
+
+60-SQL> 
+60-SQL> --SELECT * FROM USER_CONSTRAINTS WHERE TABLE_NAME = 'TBEXPERIMENT';
+60-SQL> 
+60-SQL> CREATE table tbexp_version (
+  2          experimentid    char(4)              not null,
+  3            constraint fk_experimentid_tbexp_version foreign key (experimentid) references tbexperiment(experimentid) on delete cascade,
+  4          versionID       numeric(38,0)            not null
+  5            constraint versionID_ck check (versionID>=0),
+  6          versionDescription  char(100)         not null,
+  7            constraint pk_tbexp_version PRIMARY KEY (experimentid,versionID)
+  8  );
+
+Table created.
+
+60-SQL> 
+60-SQL> CREATE table tbpolarity_type (
+  2          polarityType    char(1)             not null,
+  3          polarity        char(8)             not null,
+  4            constraint pk_tbpolarity_type PRIMARY KEY (polarityType)
+  5  );
+
+Table created.
+
+60-SQL> 
+60-SQL> 
+60-SQL> CREATE table TBEXP_VERS_PARTICIPATION (
+  2          experimentid    char(4)             not null,
+  3          versionID       numeric(38,0)           not null,
+  4          subjectid     char(6)               not null,
+  5          polarityType    char(1)             not null,
+  6          exp_particip_date date              null,
+  7          start_time      timestamp                null,
+  8          end_time        timestamp                null,
+  9          payment         number(5,2)         not null
+ 10            constraint payment_ck check (payment between 0 and 600),
+ 11          gender          char(1)             not null
+ 12            constraint gender_ck check (gender in ('M', 'F', 'm', 'F')),
+ 13          matlab_initials   char(3)           not null,
+ 14          handedness        char(1)           not null
+ 15            constraint handedness_ck check (handedness in ('R', 'L', 'A', 'r', 'l', 'a')),
+ 16          hand_used         char(1)           not null
+ 17            constraint handused_ck check (hand_used in ('R', 'L', 'r', 'l')),
+ 18          age               char(3)           not null
+ 19            constraint age_ck check (age between 0 and 200),
+ 20          researcherID      char(3)           not null,
+ 21            constraint fk_expid_versid_tbexp_vers_par
+ 22              foreign key (experimentid, versionID) references tbexp_version(experimentid,versionID) on delete cascade,
+ 23            constraint pk_expid_versID_subjid PRIMARY KEY (experimentid, versionID, subjectid),
+ 24            constraint fk_resID_tbexp_vers_part FOREIGN KEY (researcherID) references tbresearcher(researcherid) on delete cascade
+ 25  );
+
+Table created.
+
+60-SQL> 
+60-SQL> alter table TBEXP_VERS_PARTICIPATION modify( exp_particip_date date default to_date(sysdate, 'dd-MON-yy'));
+
+Table altered.
+
+60-SQL> 
+60-SQL> alter table TBEXP_VERS_PARTICIPATION add constraint fk_polType_tbexp_vers_part
+  2      foreign key (polarityType) references tbpolarity_type(polarityType) on delete cascade;
+
+Table altered.
+
+60-SQL> 
+60-SQL> --alter table TBEXP_VERS_PARTICIPATION modify( start_time date default to_date(sysdate, 'dd-MON-yy'));
+60-SQL> --alter table TBEXP_VERS_PARTICIPATION modify( end_time date default to_date(sysdate, 'dd-MON-yy'));
+60-SQL> 
+60-SQL> CREATE table tbnotetype (
+  2        notetype  char(3) not null,
+  3        meaning   char(20)  not null,
+  4        constraint pk_notetype_tbnotetype primary key (notetype)
+  5  );
+
+Table created.
+
+60-SQL> 
+60-SQL> 
+60-SQL> CREATE table TBPARTICIPANT_NOTE (
+  2          experimentid    char(4)             not null,
+  3          versionID       numeric(38,0)           not null,
+  4          subjectid     char(6)               not null,
+  5          noteno        numeric(38,0)               not null
+  6            constraint noteno_ck check (noteno between 1 and 99999),
+  7          note          char(100)             not null,
+  8          notetype      char(3)               not null,
+  9          notedate      date                  null,
+ 10          notetime      timestamp              null,
+ 11          researcherID      char(3)           not null,
+ 12            constraint fk_notetype_tbparticipant_note foreign key (notetype) references tbnotetype(notetype) on delete cascade,
+ 13            constraint fk_resID_tbpart_note foreign key (researcherid) references tbresearcher(researcherid) on delete cascade,
+ 14            constraint fk_eIDvIDsIDtbpart_note
+ 15              foreign key (experimentid, versionid, subjectid) references TBEXP_VERS_PARTICIPATION(experimentid, versionID, subjectid) on delete cascade,
+ 16            constraint pk_eIDvIDsIDnNo_tbpn primary key (experimentid, versionID, subjectid, noteno)
+ 17  );
+
+Table created.
+
+60-SQL> 
+60-SQL> alter table tbparticipant_note modify( notedate date default to_date(sysdate, 'dd-MON-yy'));
+
+Table altered.
+
+60-SQL> 
+60-SQL> create table tbmeasure_type (
+  2      measureType char(20)  not null,
+  3      detail    char(100)   not null,
+  4      units     char(10)    not null,
+  5      constraint pk_measureType_tbmsrtype primary key (measureType)
+  6  );
+
+Table created.
+
+60-SQL> 
+60-SQL> create table tbmeasurement (
+  2      experimentid    char(4)             not null,
+  3      versionID       numeric(38,0)           not null,
+  4      subjectid     char(6)               not null,
+  5      measureNo     numeric(38,0)            not null
+  6        constraint measureNo_ck check (measureNo > 0),
+  7      dataNumber    number                null,
+  8      dataChar      char                null,
+  9      measureType char(20)  not null,
+ 10        constraint fk_measureType_tbmsrmnt foreign key (measureType) references tbmeasure_type(measureType) on delete cascade,
+ 11        constraint fk_eIDvIDsID_tbmsrmt
+ 12              foreign key (experimentid, versionid, subjectid) references TBEXP_VERS_PARTICIPATION(experimentid, versionID, subjectid) on delete cascade,
+ 13            constraint pk_eIDvIDsIDmNo primary key (experimentid, versionID, subjectid, measureNo)
+ 14  );
+
+Table created.
+
+60-SQL> 
+60-SQL> -- ******************************************************
+60-SQL> --    CREATE SEQUENCES
+60-SQL> -- ******************************************************
+60-SQL> 
+60-SQL> --none--
+60-SQL> 
+60-SQL> -- ******************************************************
+60-SQL> --    POPULATE TABLES
+60-SQL> -- ******************************************************
+60-SQL> 
+60-SQL> /* inventory tbresearcher */
+60-SQL> INSERT into tbresearcher values ('101', 'Waldo', 'Ralph');
+
+1 row created.
+
+60-SQL> INSERT into tbresearcher values ('102', 'Smith', 'Sam');
+
+1 row created.
+
+60-SQL> INSERT into tbresearcher values ('103', 'Bob', 'Joe');
+
+1 row created.
+
+60-SQL> 
+60-SQL> /* inventory tbsubject */
+60-SQL> INSERT into tbsubject values ('100000', 'Smith', 'Bob');
+
+1 row created.
+
+60-SQL> INSERT into tbsubject values ('000001', 'Harris', 'John');
+
+1 row created.
+
+60-SQL> INSERT into tbsubject values ('234500', 'Fey', 'Mia');
+
+1 row created.
+
+60-SQL> 
+60-SQL> /* inventory tbsubject_phone */
+60-SQL> INSERT into tbsubject_phone values ('100000', '1', '5555555555', 'Home');
+
+1 row created.
+
+60-SQL> INSERT into tbsubject_phone values ('000001', '1', '2345437890', 'Home');
+
+1 row created.
+
+60-SQL> INSERT into tbsubject_phone values ('000001', '2', '2345891348', 'Cell');
+
+1 row created.
+
+60-SQL> INSERT into tbsubject_phone values ('234500', '1', '1234567890', 'Cell');
+
+1 row created.
+
+60-SQL> 
+60-SQL> /* inventory tbsubject_email */
+60-SQL> INSERT into tbsubject_email (subjectid, emailno, subjectemail) values ('100000', '1', 'smith@smith.com');
+
+1 row created.
+
+60-SQL> INSERT into tbsubject_email (subjectid, emailno, subjectemail) values ('000001', '1', 'harris@harrisguy.net');
+
+1 row created.
+
+60-SQL> INSERT into tbsubject_email (subjectid, emailno, subjectemail) values ('000001', '2', 'crazyfrisbee@harris.com');
+
+1 row created.
+
+60-SQL> INSERT into tbsubject_email (subjectid, emailno, subjectemail) values ('234500', '1', 'feylawoffices@feylaw.com');
+
+1 row created.
+
+60-SQL> 
+60-SQL> /* inventory tbsubject_address */
+60-SQL> INSERT into tbsubject_address (subjectid, addressno, streetnumber, streetname, city, state, zip, addresstype)
+  2    values ('100000', '1', '100', 'Soldier''s Field Boulevard', 'Boston', 'MA', '23140', 'Home');
+
+1 row created.
+
+60-SQL> INSERT into tbsubject_address (subjectid, addressno, streetnumber, streetname, city, state, zip, addresstype)
+  2    values ('234500', '1', '230', 'West Street', 'Cambridge', 'MA', '23451', 'School');
+
+1 row created.
+
+60-SQL> INSERT into tbsubject_address (subjectid, addressno, streetnumber, streetname, city, state, zip, addresstype)
+  2    values ('234500', '2', '450', 'South Avenue', 'Allston', 'MA', '34231', 'Business');
+
+1 row created.
+
+60-SQL> INSERT into tbsubject_address (subjectid, addressno, streetnumber, streetname, city, state, zip, addresstype)
+  2    values ('000001', '1', '453', 'South Avenue', 'Allston', 'MA', '34231', 'Business');
+
+1 row created.
+
+60-SQL> 
+60-SQL> /* inventory tbexperiment_type */
+60-SQL> insert into tbexperiment_type (exptype, exptype_description) values ('VMR', 'Visuomotor Rotation Task');
+
+1 row created.
+
+60-SQL> insert into tbexperiment_type (exptype, exptype_description) values ('FF', 'Force-Field with Robot Arm');
+
+1 row created.
+
+60-SQL> insert into tbexperiment_type (exptype, exptype_description) values ('MM', 'Motor Math Task with Weighted Blocks');
+
+1 row created.
+
+60-SQL> 
+60-SQL> /* inventory tbexperiment */
+60-SQL> insert into tbexperiment (experimentid, exptype, exp_polarityon, polarityDescription) values ('1000', 'VMR', '1', 'cursor rotation');
+
+1 row created.
+
+60-SQL> insert into tbexperiment (experimentid, exptype, exp_polarityon, polarityDescription) values ('2000', 'FF', '1', 'Forcefield direction');
+
+1 row created.
+
+60-SQL> insert into tbexperiment (experimentid, exptype, exp_polarityon, polarityDescription) values ('3000', 'MM', '0', null);
+
+1 row created.
+
+60-SQL> 
+60-SQL> /* inventory tbexp_version */
+60-SQL> insert into tbexp_version (experimentid, versionID, versionDescription) values ('1000', '1', 'Sum of Sine Waves');
+
+1 row created.
+
+60-SQL> insert into tbexp_version (experimentid, versionID, versionDescription) values ('1000', '2', 'Sum of Sine Waves - 4 sine waves');
+
+1 row created.
+
+60-SQL> insert into tbexp_version (experimentid, versionID, versionDescription) values ('3000', '1', 'Subtraction Version 1');
+
+1 row created.
+
+60-SQL> 
+60-SQL> /* inventory tbpolarity_type */
+60-SQL> insert into tbpolarity_type (polaritytype, polarity) values ('P', 'positive');
+
+1 row created.
+
+60-SQL> insert into tbpolarity_type (polaritytype, polarity) values ('N', 'negative');
+
+1 row created.
+
+60-SQL> insert into tbpolarity_type (polaritytype, polarity) values ('0', 'none');
+
+1 row created.
+
+60-SQL> 
+60-SQL> alter session set nls_timestamp_format = 'RR/MM/DD HH24:MI:SSXFF';
+
+Session altered.
+
+60-SQL> alter session set nls_date_language ='ENGLISH';
+
+Session altered.
+
+60-SQL> select * from nls_session_parameters where parameter = 'NLS_DATE_FORMAT';
+
+PARAMETER                      VALUE                                            
+------------------------------ ----------------------------------------         
+NLS_DATE_FORMAT                DD-MON-RR                                        
+
+60-SQL> select * from nls_session_parameters where parameter = 'NLS_TIME_FORMAT';
+
+PARAMETER                      VALUE                                            
+------------------------------ ----------------------------------------         
+NLS_TIME_FORMAT                HH.MI.SSXFF AM                                   
+
+60-SQL> 
+60-SQL> /* inventory tbexp_vers_participation */
+60-SQL> insert into tbexp_vers_participation (experimentid,versionID,subjectid,polarityType,exp_particip_date,start_time,end_time,payment,gender,matlab_initials,handedness,hand_used,age,researcherID) values
+  2    ('1000','1','100000','P','11-OCT-2014','11-12-14 10:05:23.000000000','12-OCT-11 10:05:23.000000000','30.00','M','bsm','R','R','21','101');
+
+1 row created.
+
+60-SQL> insert into tbexp_vers_participation (experimentid,versionID,subjectid,polarityType,exp_particip_date,start_time,end_time,payment,gender,matlab_initials,handedness,hand_used,age,researcherID) values
+  2    ('1000','1','000001','N','11-OCT-2014','11-12-14 10:05:23.000000000','12-OCT-11 10:05:23.000000000','30.00','M','jha','A','R','72','102');
+
+1 row created.
+
+60-SQL> insert into tbexp_vers_participation (experimentid,versionID,subjectid,polarityType,exp_particip_date,start_time,end_time,payment,gender,matlab_initials,handedness,hand_used,age,researcherID) values
+  2    ('1000','2','234500','P','11-OCT-2011','11-12-14 10:05:23.000000000','12-OCT-11 10:05:23.000000000','30.00','F','mfe','L','R','22','103');
+
+1 row created.
+
+60-SQL> insert into tbexp_vers_participation (experimentid,versionID,subjectid,polarityType,exp_particip_date,start_time,end_time,payment,gender,matlab_initials,handedness,hand_used,age,researcherID) values
+  2    ('3000','1','100000','0','11-OCT-2011','11-12-14 10:05:23.000000000','12-OCT-11 12:05:23.000000000','30.00','M','bsm','R','R','18','101');
+
+1 row created.
+
+60-SQL> 
+60-SQL> /* inventory tbnotetype */
+60-SQL> insert into tbnotetype (notetype,meaning) values ('SER', 'Subject Error');
+
+1 row created.
+
+60-SQL> insert into tbnotetype (notetype,meaning) values ('MAL', 'Malfunction');
+
+1 row created.
+
+60-SQL> insert into tbnotetype (notetype,meaning) values ('GEN', 'General');
+
+1 row created.
+
+60-SQL> 
+60-SQL> /* inventory tbparticipant_note */
+60-SQL> insert into tbparticipant_note (experimentid,versionID,subjectID,noteno,note,notetype,notedate,notetime,researcherID) values ('1000','1','100000','1','moved too slowly at first','SER','11-DEC-14','11-DEC-14 17:10:17.000000000','101');
+
+1 row created.
+
+60-SQL> insert into tbparticipant_note (experimentid,versionID,subjectID,noteno,note,notetype,notedate,notetime,researcherID) values ('1000','1','100000','2','Block A, Trial 200: made three movements on one trial','SER','11-DEC-14','11-DEC-14 17:15:23.000000000','101');
+
+1 row created.
+
+60-SQL> insert into tbparticipant_note (experimentid,versionID,subjectID,noteno,note,notetype,notedate,notetime,researcherID) values ('1000','2','234500','1','subject was extremely confused by cursor rotation','GEN','11-OCT-14','11-OCT-14 18:05:23.000000000','103');
+
+1 row created.
+
+60-SQL> insert into tbparticipant_note (experimentid,versionID,subjectID,noteno,note,notetype,notedate,notetime,researcherID) values ('3000','1','100000','1','program froze, had to restart and repeat Block H','MAL','11-OCT-11','11-OCT-11 12:40:00.000000000','101');
+
+1 row created.
+
+60-SQL> 
+60-SQL> /* inventory tbmeasure_type */
+60-SQL> insert into tbmeasure_type (measureType,detail,units) values ('p1_angle','angle of tricep to vertical','degrees');
+
+1 row created.
+
+60-SQL> insert into tbmeasure_type (measureType,detail,units) values ('p2_angle','angle of forearm to vertical','degrees');
+
+1 row created.
+
+60-SQL> insert into tbmeasure_type (measureType,detail,units) values ('arm_length1','shoulder to elbow','cm');
+
+1 row created.
+
+60-SQL> insert into tbmeasure_type (measureType,detail,units) values ('arm_length2','elbow to middle knuckle','cm');
+
+1 row created.
+
+60-SQL> 
+60-SQL> /* inventory tbmeasurement */
+60-SQL> insert into tbmeasurement (experimentid, versionID, subjectid, measureno, dataNumber, dataChar, measureType) values
+  2    ('1000','1','100000','1',89.5,null,'p1_angle');
+
+1 row created.
+
+60-SQL> insert into tbmeasurement (experimentid, versionID, subjectid, measureno, dataNumber, dataChar, measureType) values
+  2    ('1000','1','100000','2',78.4,null,'p1_angle');
+
+1 row created.
+
+60-SQL> insert into tbmeasurement (experimentid, versionID, subjectid, measureno, dataNumber, dataChar, measureType) values
+  2    ('1000','1','100000','3',74.3,null,'p1_angle');
+
+1 row created.
+
+60-SQL> insert into tbmeasurement (experimentid, versionID, subjectid, measureno, dataNumber, dataChar, measureType) values
+  2    ('1000','2','234500','1',87.5,null,'p1_angle');
+
+1 row created.
+
+60-SQL> insert into tbmeasurement (experimentid, versionID, subjectid, measureno, dataNumber, dataChar, measureType) values
+  2    ('1000','2','234500','2',15.4,null,'arm_length1');
+
+1 row created.
+
+60-SQL> insert into tbmeasurement (experimentid, versionID, subjectid, measureno, dataNumber, dataChar, measureType) values
+  2    ('3000','1','100000','1',16,null,'arm_length2');
+
+1 row created.
+
+60-SQL> 
+60-SQL> -- ******************************************************
+60-SQL> --    VIEW TABLES
+60-SQL> --
+60-SQL> -- Note:  Issue the appropiate commands to show your data
+60-SQL> -- ******************************************************
+60-SQL> 
+60-SQL> /*1*/ SELECT *
+  2          FROM tbresearcher;
+
+RES RESEARCHER_LASTNAME                                                         
+--- ----------------------------------------                                    
+RESEARCHER_FIRSTNAME                                                            
+----------------------------------------                                        
+101 Waldo                                                                       
+Ralph                                                                           
+                                                                                
+102 Smith                                                                       
+Sam                                                                             
+                                                                                
+103 Bob                                                                         
+Joe                                                                             
+                                                                                
+
+60-SQL> 
+60-SQL> /*2*/ Select * from tbexperiment;
+
+EXPE EXPT E POLARITYDESCRIPTION                                                 
+---- ---- - --------------------                                                
+1000 VMR  1 cursor rotation                                                     
+2000 FF   1 Forcefield direction                                                
+3000 MM   0                                                                     
+
+60-SQL> 
+60-SQL> /*3*/ select * from tbexperiment_type;
+
+EXPT                                                                            
+----                                                                            
+EXPTYPE_DESCRIPTION                                                             
+--------------------------------------------------------------------------------
+VMR                                                                             
+Visuomotor Rotation Task                                                        
+                                                                                
+                                                                                
+FF                                                                              
+Force-Field with Robot Arm                                                      
+                                                                                
+                                                                                
+MM                                                                              
+
+EXPT                                                                            
+----                                                                            
+EXPTYPE_DESCRIPTION                                                             
+--------------------------------------------------------------------------------
+Motor Math Task with Weighted Blocks                                            
+                                                                                
+                                                                                
+
+60-SQL> 
+60-SQL> /*4*/ SELECT * FROM tbsubject;
+
+SUBJEC SUBJECT_LASTNAME                                                         
+------ ----------------------------------------                                 
+SUBJECT_FIRSTNAME                                                               
+----------------------------------------                                        
+100000 Smith                                                                    
+Bob                                                                             
+                                                                                
+000001 Harris                                                                   
+John                                                                            
+                                                                                
+234500 Fey                                                                      
+Mia                                                                             
+                                                                                
+
+60-SQL> 
+60-SQL> /*5*/ select * from tbsubject_address;
+
+SUBJEC  ADDRESSNO STREETNUMBER                                                  
+------ ---------- --------------------------------------------------            
+STREETNAME                                                                      
+--------------------------------------------------------------------------------
+CITY                                                                            
+--------------------------------------------------------------------------------
+ST ZIP   ADDRESSTYPE                                                            
+-- ----- --------------------                                                   
+100000          1 100                                                           
+Soldier's Field Boulevard                                                       
+                                                                                
+Boston                                                                          
+                                                                                
+
+SUBJEC  ADDRESSNO STREETNUMBER                                                  
+------ ---------- --------------------------------------------------            
+STREETNAME                                                                      
+--------------------------------------------------------------------------------
+CITY                                                                            
+--------------------------------------------------------------------------------
+ST ZIP   ADDRESSTYPE                                                            
+-- ----- --------------------                                                   
+MA 23140 Home                                                                   
+                                                                                
+234500          1 230                                                           
+West Street                                                                     
+                                                                                
+
+SUBJEC  ADDRESSNO STREETNUMBER                                                  
+------ ---------- --------------------------------------------------            
+STREETNAME                                                                      
+--------------------------------------------------------------------------------
+CITY                                                                            
+--------------------------------------------------------------------------------
+ST ZIP   ADDRESSTYPE                                                            
+-- ----- --------------------                                                   
+Cambridge                                                                       
+                                                                                
+MA 23451 School                                                                 
+                                                                                
+234500          2 450                                                           
+
+SUBJEC  ADDRESSNO STREETNUMBER                                                  
+------ ---------- --------------------------------------------------            
+STREETNAME                                                                      
+--------------------------------------------------------------------------------
+CITY                                                                            
+--------------------------------------------------------------------------------
+ST ZIP   ADDRESSTYPE                                                            
+-- ----- --------------------                                                   
+South Avenue                                                                    
+                                                                                
+Allston                                                                         
+                                                                                
+MA 34231 Business                                                               
+
+SUBJEC  ADDRESSNO STREETNUMBER                                                  
+------ ---------- --------------------------------------------------            
+STREETNAME                                                                      
+--------------------------------------------------------------------------------
+CITY                                                                            
+--------------------------------------------------------------------------------
+ST ZIP   ADDRESSTYPE                                                            
+-- ----- --------------------                                                   
+                                                                                
+000001          1 453                                                           
+South Avenue                                                                    
+                                                                                
+Allston                                                                         
+
+SUBJEC  ADDRESSNO STREETNUMBER                                                  
+------ ---------- --------------------------------------------------            
+STREETNAME                                                                      
+--------------------------------------------------------------------------------
+CITY                                                                            
+--------------------------------------------------------------------------------
+ST ZIP   ADDRESSTYPE                                                            
+-- ----- --------------------                                                   
+                                                                                
+MA 34231 Business                                                               
+                                                                                
+
+60-SQL> 
+60-SQL> /*6*/ select * from tbsubject_email;
+
+SUBJEC    EMAILNO                                                               
+------ ----------                                                               
+SUBJECTEMAIL                                                                    
+--------------------------------------------------------------------------------
+100000          1                                                               
+smith@smith.com                                                                 
+                                                                                
+                                                                                
+000001          1                                                               
+harris@harrisguy.net                                                            
+                                                                                
+                                                                                
+000001          2                                                               
+
+SUBJEC    EMAILNO                                                               
+------ ----------                                                               
+SUBJECTEMAIL                                                                    
+--------------------------------------------------------------------------------
+crazyfrisbee@harris.com                                                         
+                                                                                
+                                                                                
+234500          1                                                               
+feylawoffices@feylaw.com                                                        
+                                                                                
+                                                                                
+
+60-SQL> 
+60-SQL> /*7*/ select * from tbsubject_phone;
+
+SUBJEC     LINENO PHONENO    PHONETYPE                                          
+------ ---------- ---------- --------------------                               
+100000          1 5555555555 Home                                               
+000001          1 2345437890 Home                                               
+000001          2 2345891348 Cell                                               
+234500          1 1234567890 Cell                                               
+
+60-SQL> 
+60-SQL> /*8*/ select * from tbpolarity_type;
+
+P POLARITY                                                                      
+- --------                                                                      
+P positive                                                                      
+N negative                                                                      
+0 none                                                                          
+
+60-SQL> 
+60-SQL> /*9*/ select * from tbmeasurement;
+
+EXPE  VERSIONID SUBJEC  MEASURENO DATANUMBER D MEASURETYPE                      
+---- ---------- ------ ---------- ---------- - --------------------             
+1000          1 100000          1       89.5   p1_angle                         
+1000          1 100000          2       78.4   p1_angle                         
+1000          1 100000          3       74.3   p1_angle                         
+1000          2 234500          1       87.5   p1_angle                         
+1000          2 234500          2       15.4   arm_length1                      
+3000          1 100000          1         16   arm_length2                      
+
+6 rows selected.
+
+60-SQL> 
+60-SQL> /*10*/ select * from tbmeasure_type;
+
+MEASURETYPE                                                                     
+--------------------                                                            
+DETAIL                                                                          
+--------------------------------------------------------------------------------
+UNITS                                                                           
+----------                                                                      
+p1_angle                                                                        
+angle of tricep to vertical                                                     
+                                                                                
+degrees                                                                         
+                                                                                
+p2_angle                                                                        
+angle of forearm to vertical                                                    
+
+MEASURETYPE                                                                     
+--------------------                                                            
+DETAIL                                                                          
+--------------------------------------------------------------------------------
+UNITS                                                                           
+----------                                                                      
+                                                                                
+degrees                                                                         
+                                                                                
+arm_length1                                                                     
+shoulder to elbow                                                               
+                                                                                
+cm                                                                              
+
+MEASURETYPE                                                                     
+--------------------                                                            
+DETAIL                                                                          
+--------------------------------------------------------------------------------
+UNITS                                                                           
+----------                                                                      
+                                                                                
+arm_length2                                                                     
+elbow to middle knuckle                                                         
+                                                                                
+cm                                                                              
+                                                                                
+
+60-SQL> 
+60-SQL> /*11*/ select * from tbparticipant_note;
+
+EXPE  VERSIONID SUBJEC     NOTENO                                               
+---- ---------- ------ ----------                                               
+NOTE                                                                            
+--------------------------------------------------------------------------------
+NOT NOTEDATE                                                                    
+--- ---------                                                                   
+NOTETIME                                                                    RES 
+--------------------------------------------------------------------------- --- 
+1000          1 100000          1                                               
+moved too slowly at first                                                       
+                                                                                
+SER 11-DEC-14                                                                   
+11/12/14 17:10:17.000000                                                    101 
+
+EXPE  VERSIONID SUBJEC     NOTENO                                               
+---- ---------- ------ ----------                                               
+NOTE                                                                            
+--------------------------------------------------------------------------------
+NOT NOTEDATE                                                                    
+--- ---------                                                                   
+NOTETIME                                                                    RES 
+--------------------------------------------------------------------------- --- 
+                                                                                
+1000          1 100000          2                                               
+Block A, Trial 200: made three movements on one trial                           
+                                                                                
+SER 11-DEC-14                                                                   
+
+EXPE  VERSIONID SUBJEC     NOTENO                                               
+---- ---------- ------ ----------                                               
+NOTE                                                                            
+--------------------------------------------------------------------------------
+NOT NOTEDATE                                                                    
+--- ---------                                                                   
+NOTETIME                                                                    RES 
+--------------------------------------------------------------------------- --- 
+11/12/14 17:15:23.000000                                                    101 
+                                                                                
+1000          2 234500          1                                               
+subject was extremely confused by cursor rotation                               
+                                                                                
+
+EXPE  VERSIONID SUBJEC     NOTENO                                               
+---- ---------- ------ ----------                                               
+NOTE                                                                            
+--------------------------------------------------------------------------------
+NOT NOTEDATE                                                                    
+--- ---------                                                                   
+NOTETIME                                                                    RES 
+--------------------------------------------------------------------------- --- 
+GEN 11-OCT-14                                                                   
+11/10/14 18:05:23.000000                                                    103 
+                                                                                
+3000          1 100000          1                                               
+program froze, had to restart and repeat Block H                                
+
+EXPE  VERSIONID SUBJEC     NOTENO                                               
+---- ---------- ------ ----------                                               
+NOTE                                                                            
+--------------------------------------------------------------------------------
+NOT NOTEDATE                                                                    
+--- ---------                                                                   
+NOTETIME                                                                    RES 
+--------------------------------------------------------------------------- --- 
+                                                                                
+MAL 11-OCT-11                                                                   
+11/10/11 12:40:00.000000                                                    101 
+                                                                                
+
+60-SQL> 
+60-SQL> /*12*/ select * from tbnotetype;
+
+NOT MEANING                                                                     
+--- --------------------                                                        
+SER Subject Error                                                               
+MAL Malfunction                                                                 
+GEN General                                                                     
+
+60-SQL> 
+60-SQL> /*13*/ select * from tbexp_vers_participation;
+
+EXPE  VERSIONID SUBJEC P EXP_PARTI                                              
+---- ---------- ------ - ---------                                              
+START_TIME                                                                      
+---------------------------------------------------------------------------     
+END_TIME                                                                        
+---------------------------------------------------------------------------     
+   PAYMENT G MAT H H AGE RES                                                    
+---------- - --- - - --- ---                                                    
+1000          1 100000 P 11-OCT-14                                              
+11/12/14 10:05:23.000000                                                        
+12/10/11 10:05:23.000000                                                        
+        30 M bsm R R 21  101                                                    
+                                                                                
+
+EXPE  VERSIONID SUBJEC P EXP_PARTI                                              
+---- ---------- ------ - ---------                                              
+START_TIME                                                                      
+---------------------------------------------------------------------------     
+END_TIME                                                                        
+---------------------------------------------------------------------------     
+   PAYMENT G MAT H H AGE RES                                                    
+---------- - --- - - --- ---                                                    
+1000          1 000001 N 11-OCT-14                                              
+11/12/14 10:05:23.000000                                                        
+12/10/11 10:05:23.000000                                                        
+        30 M jha A R 72  102                                                    
+                                                                                
+
+EXPE  VERSIONID SUBJEC P EXP_PARTI                                              
+---- ---------- ------ - ---------                                              
+START_TIME                                                                      
+---------------------------------------------------------------------------     
+END_TIME                                                                        
+---------------------------------------------------------------------------     
+   PAYMENT G MAT H H AGE RES                                                    
+---------- - --- - - --- ---                                                    
+1000          2 234500 P 11-OCT-11                                              
+11/12/14 10:05:23.000000                                                        
+12/10/11 10:05:23.000000                                                        
+        30 F mfe L R 22  103                                                    
+                                                                                
+
+EXPE  VERSIONID SUBJEC P EXP_PARTI                                              
+---- ---------- ------ - ---------                                              
+START_TIME                                                                      
+---------------------------------------------------------------------------     
+END_TIME                                                                        
+---------------------------------------------------------------------------     
+   PAYMENT G MAT H H AGE RES                                                    
+---------- - --- - - --- ---                                                    
+3000          1 100000 0 11-OCT-11                                              
+11/12/14 10:05:23.000000                                                        
+12/10/11 12:05:23.000000                                                        
+        30 M bsm R R 18  101                                                    
+                                                                                
+
+60-SQL> 
+60-SQL> /*14*/ select * from tbexp_version;
+
+EXPE  VERSIONID                                                                 
+---- ----------                                                                 
+VERSIONDESCRIPTION                                                              
+--------------------------------------------------------------------------------
+1000          1                                                                 
+Sum of Sine Waves                                                               
+                                                                                
+                                                                                
+1000          2                                                                 
+Sum of Sine Waves - 4 sine waves                                                
+                                                                                
+                                                                                
+3000          1                                                                 
+
+EXPE  VERSIONID                                                                 
+---- ----------                                                                 
+VERSIONDESCRIPTION                                                              
+--------------------------------------------------------------------------------
+Subtraction Version 1                                                           
+                                                                                
+                                                                                
+
+60-SQL> 
+60-SQL> 
+60-SQL> CREATE VIEW payments_view AS
+  2  select a1.exp_particip_date, b.subjectid, b.subject_firstname, b.subject_lastname, a1.payment, e.exptype, c1.versionid, c1.versiondescription
+  3  from tbexp_vers_participation a1, tbsubject b, tbexp_version c1, tbexperiment d, tbexperiment_type e
+  4  where a1.subjectid = b.subjectid and
+  5  a1.experimentid = d.experimentid and
+  6  e.exptype = d.exptype and
+  7  a1.versionid = c1.versionid and
+  8  a1.experimentid = c1.experimentid
+  9  order by 1,7;
+
+View created.
+
+60-SQL> 
+60-SQL> SELECT SUM(payment) as Total_Paid
+  2  from payments_view;
+
+TOTAL_PAID                                                                      
+----------                                                                      
+       120                                                                      
+
+60-SQL> 
+60-SQL> create view totalpaidpersubject as
+  2  select subjectid, subject_firstname, subject_lastname, SUM(payment) as Total_Paid
+  3  from payments_view
+  4  group by subjectid, subject_firstname, subject_lastname
+  5  order by 4;
+
+View created.
+
+60-SQL> 
+60-SQL> select*
+  2  from payments_view;
+
+EXP_PARTI SUBJEC SUBJECT_FIRSTNAME                                              
+--------- ------ ----------------------------------------                       
+SUBJECT_LASTNAME                            PAYMENT EXPT  VERSIONID             
+---------------------------------------- ---------- ---- ----------             
+VERSIONDESCRIPTION                                                              
+--------------------------------------------------------------------------------
+11-OCT-11 100000 Bob                                                            
+Smith                                            30 MM            1             
+Subtraction Version 1                                                           
+                                                                                
+                                                                                
+11-OCT-11 234500 Mia                                                            
+Fey                                              30 VMR           2             
+
+EXP_PARTI SUBJEC SUBJECT_FIRSTNAME                                              
+--------- ------ ----------------------------------------                       
+SUBJECT_LASTNAME                            PAYMENT EXPT  VERSIONID             
+---------------------------------------- ---------- ---- ----------             
+VERSIONDESCRIPTION                                                              
+--------------------------------------------------------------------------------
+Sum of Sine Waves - 4 sine waves                                                
+                                                                                
+                                                                                
+11-OCT-14 100000 Bob                                                            
+Smith                                            30 VMR           1             
+Sum of Sine Waves                                                               
+                                                                                
+
+EXP_PARTI SUBJEC SUBJECT_FIRSTNAME                                              
+--------- ------ ----------------------------------------                       
+SUBJECT_LASTNAME                            PAYMENT EXPT  VERSIONID             
+---------------------------------------- ---------- ---- ----------             
+VERSIONDESCRIPTION                                                              
+--------------------------------------------------------------------------------
+                                                                                
+11-OCT-14 000001 John                                                           
+Harris                                           30 VMR           1             
+Sum of Sine Waves                                                               
+                                                                                
+                                                                                
+
+60-SQL> 
+60-SQL> select*
+  2  from TOTALPAIDPERSUBJECT;
+
+SUBJEC SUBJECT_FIRSTNAME                                                        
+------ ----------------------------------------                                 
+SUBJECT_LASTNAME                         TOTAL_PAID                             
+---------------------------------------- ----------                             
+234500 Mia                                                                      
+Fey                                              30                             
+                                                                                
+000001 John                                                                     
+Harris                                           30                             
+                                                                                
+100000 Bob                                                                      
+Smith                                            60                             
+                                                                                
+
+60-SQL> 
+60-SQL> select subjectid, subject_firstname, subject_lastname, total_paid
+  2  from totalpaidpersubject
+  3  where total_paid>500
+  4  order by 1;
+
+no rows selected
+
+60-SQL> 
+60-SQL> COMMIT
+  2  -- ******************************************************
+  3  --    END SESSION
+  4  -- ******************************************************
+  5  
+60-SQL> spool
+currently spooling to efang2014fp.lst
+60-SQL> spool off
